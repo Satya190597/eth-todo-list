@@ -6,6 +6,7 @@ App = {
     await App.loadWeb3();
     await App.loadAccount();
     await App.loadContract();
+    await App.renderTasks();
     // await App.render();
   },
 
@@ -57,27 +58,45 @@ App = {
     console.log($("#newTask").val());
     const content = $("#newTask").val();
     const accounts = await web3.eth.getAccounts();
-    console.log(accounts[0]);
-    //await App.todoList.createTask(content,);
-    //window.location.reload();
+    await App.todoList.createTask(content, { from: accounts[0] });
+    window.location.reload();
   },
   loadContract: async () => {
     const todoList = await $.getJSON("TodoList.json");
     console.log(todoList);
     App.contracts.TodoList = TruffleContract(todoList);
     App.contracts.TodoList.setProvider(App.web3Provider);
-
     App.todoList = await App.contracts.TodoList.deployed();
-
+  },
+  renderTasks: async () => {
     const taskCount = await App.todoList.taskCount();
-    console.log(taskCount.toNumber());
-
+    const $taskTemplate = $(".taskTemplate");
     for (let i = 1; i <= taskCount.toNumber(); i++) {
       const task = await App.todoList.tasks(i);
-      console.log(task[1]);
+      const taskId = task[0].toNumber();
+      const taskContent = task[1];
+      const taskCompleted = task[2];
+      const $newTaskTemplate = $taskTemplate.clone();
+      $newTaskTemplate.find(".content").html(taskContent);
+      $newTaskTemplate
+        .find("input")
+        .prop("name", taskId)
+        .prop("checked", taskCompleted)
+        .on("click", App.toggleCompleted);
+      if (taskCompleted) {
+        $("#completedTaskList").append($newTaskTemplate);
+      } else {
+        $("#taskList").append($newTaskTemplate);
+      }
+      $newTaskTemplate.show();
     }
   },
-
+  toggleCompleted: async (e) => {
+    const taskId = e.target.name;
+    const accounts = await web3.eth.getAccounts();
+    await App.todoList.toggleCompleted(taskId, { from: accounts[0] });
+    window.location.reload();
+  },
   render: async () => {},
 };
 
