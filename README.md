@@ -50,5 +50,8 @@ like host, port and network_id.
 [How to Install and Use Metamask on Google Chrome?](https://www.geeksforgeeks.org/how-to-install-and-use-metamask-on-google-chrome/)\
 [Connect Metamask to localhost.](https://asifwaquar.com/connect-metamask-to-localhost/)
 
+### Architecture
+![Architecture](src/assets/eth-todo-list.png)
+
 
 
