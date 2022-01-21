@@ -2,12 +2,10 @@ App = {
   loading: false,
   contracts: {},
   load: async () => {
-    console.log("App Loading");
     await App.loadWeb3();
     await App.loadAccount();
     await App.loadContract();
     await App.renderTasks();
-    // await App.render();
   },
 
   // https://medium.com/metamask/https-medium-com-metamask-breaking-change-injecting-web3-7722797916a8
